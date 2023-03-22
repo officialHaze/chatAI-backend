@@ -12,7 +12,8 @@ messages = []
 
 @database_sync_to_async
 def getResponse(message):
-    openai.api_key = os.environ.get('OPENAI_API_KEY')
+    # openai.api_key = os.environ.get('OPENAI_API_KEY')
+    openai.api_key = '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'
     data = {
         "role":"user",
         "content":message,

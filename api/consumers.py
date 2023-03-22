@@ -1,5 +1,6 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
+from asgiref.sync import sync_to_async
 import json
 from dotenv import load_dotenv
 import os
@@ -10,7 +11,7 @@ load_dotenv()
 
 messages = []
 
-@database_sync_to_async
+@sync_to_async
 def getResponse(message):
     # openai.api_key = os.environ.get('OPENAI_API_KEY')
     openai.api_key = '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'
@@ -58,14 +59,14 @@ class AIChatConsumer(AsyncWebsocketConsumer):
             }
         )
 
-        ai_response = await getResponse(message)
-        print(ai_response)
+        self.ai_response = await getResponse(message)
+        print(self.ai_response)
 
         await self.channel_layer.group_send(
             self.room_group_name,
             {
                 "type":"AI_response",
-                "message" : ai_response,
+                "message" : self.ai_response,
             }
         )
 

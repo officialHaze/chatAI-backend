@@ -12,14 +12,12 @@ openai.api_key = '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'
 @api_view(["POST"])
 def get_ai_response(req, *args, **kwargs):
     data = req.data.get("message")
-    print(data)
+    # print(data)
 
     try:
         res = openai.ChatCompletion.create(
             model="gpt-3.5-turbo-0301",
-            messages=[
-                {"role":"user","content":data}
-            ]
+            messages=data
         )
         message = res['choices'][0]['message']['content']
         return Response({"message":message}, status=200)

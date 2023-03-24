@@ -54,7 +54,8 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://chat-ai-frontend.vercel.app"
+    "https://chat-ai-frontend.vercel.app",
+    "https://ai-speaks.vercel.app"
 ]
 
 ROOT_URLCONF = 'core.urls'

@@ -28,7 +28,28 @@ class RegisterUser(generics.CreateAPIView):
                                                last_name=last_name,
                                                password=password)
 
-        print(instance)
+        # print(instance)
+        return instance
+
+
+#create super user view
+class CreateSuperUser(generics.CreateAPIView):
+    serializer_class = UserModelSerializer
+    permission_classes = [permissions.AllowAny]
+    queryset = NewUser.objects.all()
+
+    def perform_create(self, serializer):
+        username = serializer.validated_data.get("username")
+        first_name = serializer.validated_data.get("first_name")
+        last_name = serializer.validated_data.get("last_name")
+        password = serializer.validated_data.get("password")
+
+        instance = NewUser.objects.create_superuser(username=username,
+                                               first_name=first_name,
+                                               last_name=last_name,
+                                               password=password)
+
+        # print(instance)
         return instance
 
 

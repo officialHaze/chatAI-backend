@@ -1,16 +1,21 @@
 import openai
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 import time
 import requests
 from django.core.files.storage import FileSystemStorage
+import os
+from dotenv import load_dotenv
+from rest_framework import permissions
 
+load_dotenv()
 
-openai.api_key = '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'
-ASSEMBLY_AI_API_TOKEN = 'c34b245fee6a4332872bb093421017c1'
+openai.api_key = os.environ.get("OPENAI_API_KEY")
+ASSEMBLY_AI_API_TOKEN = os.environ.get("ASSEMBLY_AI_API_TOKEN")
 
 
 @api_view(["POST"])
+@permission_classes([permissions.IsAuthenticated])
 def get_ai_response(req, *args, **kwargs):
     data = req.data.get("message")
 
@@ -26,8 +31,10 @@ def get_ai_response(req, *args, **kwargs):
 
 
 @api_view(["POST"])
+@permission_classes([permissions.IsAuthenticated])
 def transcribe_audio(req, *args, **kwargs):
     audio_file = req.FILES.get("audio_file")
+    print(audio_file)
     chunk_size = 5242880
     upload_endpoint = 'https://api.assemblyai.com/v2/upload'
     transcript_endpoint = 'https://api.assemblyai.com/v2/transcript'
@@ -71,3 +78,9 @@ def transcribe_audio(req, *args, **kwargs):
         time.sleep(1)
 
     return Response({"detail":transcribed_text}, status=200)
+
+
+#establish connection with client
+@api_view(["GET"])
+def establish_connection(req, *args, **kwargs):
+    return Response({"detail":"connection established"}, status=200)

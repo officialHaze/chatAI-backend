@@ -1,6 +1,9 @@
 from pathlib import Path
 import os
 import dj_database_url
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -36,9 +39,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'api',
     'corsheaders',
-    # 'channels',
+
+    #apps
+    'api',
+    'users',
+
+    #oauth2
+    'oauth2_provider',
+    'social_django',
+    'drf_social_oauth2',
 ]
 
 MIDDLEWARE = [
@@ -54,8 +64,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://chat-ai-frontend.vercel.app",
-    "https://ai-speaks.vercel.app"
+    "https://my-friend-ai.vercel.app"
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -71,13 +80,16 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
+                #oauth2
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
 ]
 
 WSGI_APPLICATION = 'core.wsgi.application'
-# ASGI_APPLICATION = 'core.asgi.application'
 
 
 # Database
@@ -140,21 +152,38 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# CHANNEL_LAYERS = {
-#     "default":{
-#         "BACKEND": "channels.layers.InMemoryChannelLayer"
-#     }
-# }
-
-# CHANNEL_LAYERS = {
-#     "default": {
-#         "BACKEND": "channels_redis.core.RedisChannelLayer",
-#         "CONFIG": {
-#             "hosts": [(os.environ.get("REDIS_URL", "redis://localhost:6379"))],
-#         },
-#     },
-# }
-
 CSRF_COOKIE_SECURE = True
 
 SESSION_COOKIE_SECURE = True
+
+AUTH_USER_MODEL = "users.NewUser"
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',  # django-oauth-toolkit >= 1.0.0
+        'drf_social_oauth2.authentication.SocialAuthentication',
+    ),
+}
+
+AUTHENTICATION_BACKENDS = (
+    # Google  OAuth2
+    'social_core.backends.google.GoogleOAuth2',
+
+    #drf-social-oauth2
+    'drf_social_oauth2.backends.DjangoOAuth2',
+
+    #django
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+# Google configuration
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get('GOOGLE_CLIENT_ID')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
+
+# Define SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE to get extra permissions from Google.
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/userinfo.profile',
+]
+
+SOCIAL_AUTH_USER_FIELDS = ['username', 'first_name', 'last_name', 'password']

@@ -17,7 +17,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECRET_KEY = 'django-insecure-a!9=yj=+1$z=@-$7ifm!0^*dl9n-1_e8&i5^#dm_59*mquj=ae'
 SECRET_KEY = os.environ.get(
     'SECRET_KEY',
-    default='django-insecure-9&v8t*)t3*)42fkm^31uy!_*!=8xbi*(7kl%9ja@1a*4&^-)1t')
+    default=os.environ.get('DEFAULT_DJANGO_SECRET_KEY'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
@@ -64,8 +64,8 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "https://my-friend-ai.vercel.app"
+    os.environ.get('CORS_ORIGIN_DEV'),
+    os.environ.get('CORS_ORIGIN_PROD'),
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -105,7 +105,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgresql://postgres:postgres@localhost:5432/core',
+        default=os.environ.get('DEFAULT_DB_URL'),
         conn_max_age=600)
     }
 
@@ -194,8 +194,8 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
 
 # Define SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE to get extra permissions from Google.
 SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
-    'https://www.googleapis.com/auth/userinfo.email',
-    'https://www.googleapis.com/auth/userinfo.profile',
+    os.environ.get('GOOGLE_SOCIAL_OAUTH_SCOPE_EMAIL'),
+    os.environ.get('GOOGLE_SOCIAL_OAUTH_SCOPE_PROFILE'),
 ]
 
 SOCIAL_AUTH_USER_FIELDS = ['username', 'first_name', 'last_name', 'password']

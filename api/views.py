@@ -19,15 +19,15 @@ ASSEMBLY_AI_API_TOKEN = os.environ.get("ASSEMBLY_AI_API_TOKEN")
 def get_ai_response(req, *args, **kwargs):
     data = req.data.get("message")
 
-    try:
-        res = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo-0301",
-            messages=data
-        )
-        message = res['choices'][0]['message']['content']
-        return Response({"message":message}, status=200)
-    except:
-        return Response({"message":"error"}, status=500)
+    # try:
+    res = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo-0301",
+        messages=data
+    )
+    message = res['choices'][0]['message']['content']
+    return Response({"message":message}, status=200)
+    # except:
+    #     return Response({"message":"error"}, status=400)
 
 
 @api_view(["POST"])
@@ -36,8 +36,8 @@ def transcribe_audio(req, *args, **kwargs):
     audio_file = req.FILES.get("audio_file")
     print(audio_file)
     chunk_size = 5242880
-    upload_endpoint = 'https://api.assemblyai.com/v2/upload'
-    transcript_endpoint = 'https://api.assemblyai.com/v2/transcript'
+    upload_endpoint = os.environ.get('ASSEMBLY_AI_UPLOAD_ENDPOINT')
+    transcript_endpoint = os.environ.get('ASSEMBLY_AI_TRANSCRIPT_ENDPOINT')
 
     fs = FileSystemStorage()
     audio_file_path = fs.save(audio_file.name, audio_file)

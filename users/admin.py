@@ -41,7 +41,7 @@ class NewUserAdminView(UserAdmin):
         ),
     )
 
-    list_display = ("username", "first_name", "last_name", "date_joined", "id", "is_staff", "is_admin", "is_active",)
+    list_display = ("username", "first_name", "last_name", "date_joined", "id", "is_staff", "is_admin", "is_active", "is_superuser")
     list_filter = ("is_staff", "is_superuser", "is_active", "groups")
     ordering = ('id',)
 
